@@ -1,7 +1,17 @@
+using UserApp.Models;
+using Microsoft.EntityFrameworkCore;
+using UserApp.Repositories;
+using UserApp.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
+
+string? connection = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(connection));
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
@@ -22,6 +32,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=User}/{action=Index}/{id?}");
 
 app.Run();
